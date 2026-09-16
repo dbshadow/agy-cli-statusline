@@ -1,0 +1,19 @@
+# Agent & assistant metadata
+.gemini/
+.agents/
+
+# Temporary & editor files
+*.tmp
+*.tmp.*
+*.bak
+*.bak.*
+*.log
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local cache & temporary files
+/tmp/
