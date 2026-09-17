@@ -37,15 +37,30 @@ A fast, modular, and responsive statusline for [Antigravity CLI](https://github.
 
 ## Installation
 
-Clone the repository and run the installer:
+### 1. One-Line Quick Install (No git clone required)
+
+Run directly in your terminal:
 
 ```bash
+# Using curl:
+curl -fsSL https://raw.githubusercontent.com/dbshadow/agy-cli-statusline/main/install.sh | bash
+
+# Or using wget:
+wget -qO- https://raw.githubusercontent.com/dbshadow/agy-cli-statusline/main/install.sh | bash
+```
+
+### 2. Install from Local Clone (Development Mode)
+
+If you wish to clone and modify the statusline locally:
+
+```bash
+git clone https://github.com/dbshadow/agy-cli-statusline.git
 cd agy-cli-statusline
 
-# Development mode (recommended: creates a symlink so edits take effect immediately)
+# Development mode (symlinks files so edits take effect immediately)
 ./install.sh -s
 
-# Or standard copy mode
+# Standard local copy mode
 ./install.sh
 ```
 
@@ -154,16 +169,25 @@ Run the comprehensive test suite (22 assertions verifying bilingual output, term
 
 ## Uninstallation
 
-To restore your original configuration and remove deployed files:
+To cleanly restore your original configuration and remove deployed files:
 
 ```bash
-./uninstall.sh
+# Using installed script:
+~/.antigravity/uninstall.sh
+
+# Or remote one-liner (no clone required):
+curl -fsSL https://raw.githubusercontent.com/dbshadow/agy-cli-statusline/main/uninstall.sh | bash
+
+# To also delete personal config directory (~/.config/antigravity-statusline):
+~/.antigravity/uninstall.sh --all
+# or
+curl -fsSL https://raw.githubusercontent.com/dbshadow/agy-cli-statusline/main/uninstall.sh | bash -s -- --all
 ```
 
 This will:
 - Restore `~/.gemini/antigravity-cli/settings.json` by cleanly removing the `statusLine` block.
-- Remove `~/.antigravity/statusline.sh`.
-- Retain your custom settings at `~/.config/antigravity-statusline/statusline.conf` for future use.
+- Remove `~/.antigravity/statusline.sh` and uninstallation helper.
+- Retain your custom settings at `~/.config/antigravity-statusline/statusline.conf` by default (unless `--all` is specified).
 
 ---
 

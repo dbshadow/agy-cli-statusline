@@ -37,12 +37,27 @@
 
 ## 安裝方式
 
-進入專案目錄後執行安裝腳本：
+### 1. 單行指令快速安裝（無需 clone 專案）
+
+直接在終端機貼上並執行即可：
 
 ```bash
+# 使用 curl 安裝：
+curl -fsSL https://raw.githubusercontent.com/dbshadow/agy-cli-statusline/main/install.sh | bash
+
+# 或使用 wget 安裝：
+wget -qO- https://raw.githubusercontent.com/dbshadow/agy-cli-statusline/main/install.sh | bash
+```
+
+### 2. 本地複製安裝（開發者模式）
+
+若你想 clone 專案至本地並進行客製化開發：
+
+```bash
+git clone https://github.com/dbshadow/agy-cli-statusline.git
 cd agy-cli-statusline
 
-# 開發模式安裝（推薦：建立軟連結，之後修改程式碼即時生效）
+# 開發模式安裝（建立軟連結，之後修改本地程式碼即時生效）
 ./install.sh -s
 
 # 或標準複製安裝
@@ -157,13 +172,22 @@ PROJECT_MAX_LEN=28          # 專案路徑最大長度
 若要還原 CLI 設定並刪除安裝檔案：
 
 ```bash
-./uninstall.sh
+# 使用已安裝的本機腳本：
+~/.antigravity/uninstall.sh
+
+# 或單行遠端指令解除安裝（無需 clone 專案）：
+curl -fsSL https://raw.githubusercontent.com/dbshadow/agy-cli-statusline/main/uninstall.sh | bash
+
+# 若連同個人設定檔目錄 (~/.config/antigravity-statusline) 一併刪除：
+~/.antigravity/uninstall.sh --all
+# 或
+curl -fsSL https://raw.githubusercontent.com/dbshadow/agy-cli-statusline/main/uninstall.sh | bash -s -- --all
 ```
 
 執行後會：
 - 從 `~/.gemini/antigravity-cli/settings.json` 中乾淨移除 `statusLine` 區塊並還原。
-- 移除 `~/.antigravity/statusline.sh`。
-- 保留你的個人設定檔於 `~/.config/antigravity-statusline/statusline.conf`。
+- 移除 `~/.antigravity/statusline.sh` 與解除安裝腳本。
+- 預設保留你的個人設定檔於 `~/.config/antigravity-statusline/statusline.conf`（除非指定 `--all`）。
 
 ---
 

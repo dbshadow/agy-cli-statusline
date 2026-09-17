@@ -13,8 +13,23 @@ CLI_SETTINGS="${HOME}/.gemini/antigravity-cli/settings.json"
 C_GREEN="\033[1;32m"
 C_BLUE="\033[1;34m"
 C_YELLOW="\033[1;33m"
-C_RED="\033[1;31m"
-C_RESET="\033[0m"
+REMOVE_CONFIG=false
+
+for arg in "$@"; do
+  case "$arg" in
+    -a|--all)
+      REMOVE_CONFIG=true
+      ;;
+    -h|--help)
+      echo "Usage: ./uninstall.sh [OPTIONS]"
+      echo ""
+      echo "Options:"
+      echo "  -a, --all    Also remove configuration directory (~/.config/antigravity-statusline)"
+      echo "  -h, --help   Show this help message"
+      exit 0
+      ;;
+  esac
+done
 
 echo -e "${C_BLUE}==>${C_RESET} 開始解除安裝 Antigravity CLI 狀態列..."
 
@@ -40,8 +55,13 @@ if [ -f "${INSTALL_DIR}/uninstall.sh" ]; then
   echo -e "${C_GREEN}✓${C_RESET} 已刪除 ${INSTALL_DIR}/uninstall.sh"
 fi
 
-# 3. 詢問是否保留個人設定檔
-if [ -d "${CONFIG_DIR}" ]; then
+# 3. 個人設定檔處理
+if [ "$REMOVE_CONFIG" = true ]; then
+  if [ -d "${CONFIG_DIR}" ]; then
+    rm -rf "${CONFIG_DIR}"
+    echo -e "${C_GREEN}✓${C_RESET} 已刪除個人設定檔目錄: ${CONFIG_DIR}"
+  fi
+elif [ -d "${CONFIG_DIR}" ]; then
   echo -e "${C_YELLOW}!${C_RESET} 保留個人設定檔目錄: ${CONFIG_DIR}"
   echo -e "  若未來不再使用，可手動刪除: rm -rf ${CONFIG_DIR}"
 fi
