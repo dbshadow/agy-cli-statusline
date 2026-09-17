@@ -100,6 +100,19 @@ BADGE_ITEMS=(
 )
 ```
 
+#### Context Window Token Display
+
+The `context` badge presents token metrics in a compact format:
+```text
+Context: [█░░░░░░░] 20% (210K/1.0M | Σ1.3M)
+```
+
+| Field | Meaning | Description |
+| :--- | :--- | :--- |
+| `210K` | **Active Tokens** | The active tokens currently held in the conversation context window for the ongoing turn. |
+| `1.0M` | **Context Window Limit** | The maximum context capacity of the active model (e.g. 1,048,576 tokens for Gemini). |
+| `Σ1.3M` | **Session Total** | Cumulative API tokens consumed across the entire conversation session (all prompt + completion turns). |
+
 ### 4. Visual Styles & Thresholds
 ```bash
 SHOW_BOX_BORDER=true        # Use tree borders (╭─, ├─, ╰─)
@@ -117,7 +130,7 @@ You can run `statusline.sh` directly to test layouts or override configurations:
 
 ```bash
 # Preview with a test payload fixture
-./statusline.sh --test ./weby-homelab-antigravity-cli-statusline/tests/fixtures/full_payload.json
+./statusline.sh --test ./tests/fixtures/full_payload.json
 
 # Test in English mode
 ./statusline.sh --test ... --lang en

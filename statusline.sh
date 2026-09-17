@@ -59,7 +59,7 @@ LANGUAGE="zh-tw"
 SHOW_BOX_BORDER=true
 PROGRESS_BAR_STYLE="block"
 LINE1_ITEMS=("state" "git" "model" "project")
-BADGE_ITEMS=("context" "quota_5h" "quota_weekly" "ram" "artifacts" "subagents" "bg_tasks")
+BADGE_ITEMS=("context" "quota_5h" "quota_weekly" "ram" "cpu" "artifacts" "subagents" "bg_tasks")
 SYS_RAM_WARN_PCT=80
 SYS_LOAD_WARN=8.0
 GIT_MAX_BRANCH_LEN=24
@@ -318,6 +318,7 @@ if command -v jq >/dev/null 2>&1; then
     read -r CTX_USED_PCT
     read -r CTX_USED_TOKENS
     read -r CTX_LIMIT_TOKENS
+    read -r CTX_TOTAL_TOKENS
     read -r Q_GEMINI_5H
     read -r Q_GEMINI_5H_R
     read -r Q_GEMINI_WK
@@ -340,13 +341,21 @@ if command -v jq >/dev/null 2>&1; then
       (.vcs.branch // ""),
       (.vcs.dirty // false),
       (if (.context_window.used_percentage | type == "number") then (.context_window.used_percentage | round) else 0 end),
-      (if (.context_window.total_tokens | type == "number") and .context_window.total_tokens > 0 then
+      (if (.context_window.used_percentage | type == "number") and .context_window.used_percentage > 0 and (.context_window.context_window_size // 0) > 0 then
+        ((.context_window.used_percentage * .context_window.context_window_size / 100) | round)
+      elif (.context_window.total_tokens | type == "number") and .context_window.total_tokens > 0 then
         .context_window.total_tokens
       else
         ((if (.context_window.total_input_tokens | type == "number") then .context_window.total_input_tokens else 0 end) +
          (if (.context_window.total_output_tokens | type == "number") then .context_window.total_output_tokens else 0 end))
       end),
       (.context_window.context_window_size // 0),
+      (if (.context_window.total_tokens | type == "number") and .context_window.total_tokens > 0 then
+        .context_window.total_tokens
+      else
+        ((if (.context_window.total_input_tokens | type == "number") then .context_window.total_input_tokens else 0 end) +
+         (if (.context_window.total_output_tokens | type == "number") then .context_window.total_output_tokens else 0 end))
+      end),
       (if .quota["gemini-5h"].remaining_fraction != null then (.quota["gemini-5h"].remaining_fraction * 100 | round) else -1 end),
       (.quota["gemini-5h"].reset_in_seconds // -1),
       (if .quota["gemini-weekly"].remaining_fraction != null then (.quota["gemini-weekly"].remaining_fraction * 100 | round) else -1 end),
@@ -359,7 +368,7 @@ if command -v jq >/dev/null 2>&1; then
       (if .subagents | type == "array" then (.subagents | length) else 0 end),
       (.task_count // 0),
       (.terminal_width // 80)
-    ' 2>/dev/null || printf "idle\n\n\n\n\n\nfalse\n0\n0\n0\n-1\n-1\n-1\n-1\n-1\n-1\n-1\n-1\n0\n0\n0\n80\n"
+    ' 2>/dev/null || printf "idle\n\n\n\n\n\nfalse\n0\n0\n0\n0\n-1\n-1\n-1\n-1\n-1\n-1\n-1\n-1\n0\n0\n0\n80\n"
   )"
 else
   AGENT_STATE="idle"
@@ -372,6 +381,7 @@ else
   CTX_USED_PCT="0"
   CTX_USED_TOKENS="0"
   CTX_LIMIT_TOKENS="0"
+  CTX_TOTAL_TOKENS="0"
   Q_GEMINI_5H="-1"
   Q_GEMINI_5H_R="-1"
   Q_GEMINI_WK="-1"
@@ -566,7 +576,11 @@ for badge_name in "${BADGE_ITEMS[@]}"; do
       
       tok_str=""
       if [ "$CTX_USED_TOKENS" -gt 0 ] 2>/dev/null && [ "$CTX_LIMIT_TOKENS" -gt 0 ] 2>/dev/null; then
-        tok_str=" (${C_GRAY}$(format_tokens "$CTX_USED_TOKENS")/$(format_tokens "$CTX_LIMIT_TOKENS")${C_RESET})"
+        if [ "${CTX_TOTAL_TOKENS:-0}" -gt 0 ] 2>/dev/null; then
+          tok_str=" (${C_GRAY}$(format_tokens "$CTX_USED_TOKENS")/$(format_tokens "$CTX_LIMIT_TOKENS") | Σ$(format_tokens "$CTX_TOTAL_TOKENS")${C_RESET})"
+        else
+          tok_str=" (${C_GRAY}$(format_tokens "$CTX_USED_TOKENS")/$(format_tokens "$CTX_LIMIT_TOKENS")${C_RESET})"
+        fi
       fi
       
       ACTIVE_BADGES+=("${C_WHITE}$(get_text "label_context") ${bar_str} ${C_BOLD}${ctx_int}%${C_RESET}${tok_str}")

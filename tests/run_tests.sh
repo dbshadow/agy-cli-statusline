@@ -8,8 +8,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 STATUSLINE="${PROJECT_ROOT}/statusline.sh"
-FIXTURE_FULL="${PROJECT_ROOT}/weby-homelab-antigravity-cli-statusline/tests/fixtures/full_payload.json"
-FIXTURE_MIN="${PROJECT_ROOT}/weby-homelab-antigravity-cli-statusline/tests/fixtures/minimal_payload.json"
+FIXTURE_FULL="${SCRIPT_DIR}/fixtures/full_payload.json"
+FIXTURE_MIN="${SCRIPT_DIR}/fixtures/minimal_payload.json"
 
 PASS_COUNT=0
 FAIL_COUNT=0

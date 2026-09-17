@@ -100,6 +100,19 @@ BADGE_ITEMS=(
 )
 ```
 
+#### 脈絡用量（Context Window）數值說明
+
+狀態列的 `context` 膠囊以極簡格式呈現三項關鍵指標：
+```text
+Context: [█░░░░░░░] 20% (210K/1.0M | Σ1.3M)
+```
+
+| 欄位 | 意義 | 說明 |
+| :--- | :--- | :--- |
+| `210K` | **當前活躍 Token** | 目前留在對話視窗中、即將送交模型進行推理的實際活躍 Token 量。 |
+| `1.0M` | **視窗上限容量** | 當前 AI 模型的硬性上下文視窗上限（例如 Gemini 為 1,048,576 tokens）。 |
+| `Σ1.3M` | **會話累計總量** | 本次對話自啟動以來，所有對話輪次（輸入 + 輸出）累計消耗的 API Token 總數。 |
+
 ### 4. 樣式與警戒門檻
 ```bash
 SHOW_BOX_BORDER=true        # 是否顯示樹狀盒型邊框 (╭─, ├─, ╰─)
@@ -117,7 +130,7 @@ PROJECT_MAX_LEN=28          # 專案路徑最大長度
 
 ```bash
 # 使用測試 Payload 預覽狀態列
-./statusline.sh --test ./weby-homelab-antigravity-cli-statusline/tests/fixtures/full_payload.json
+./statusline.sh --test ./tests/fixtures/full_payload.json
 
 # 以英文模式預覽
 ./statusline.sh --test ... --lang en
